@@ -20,6 +20,16 @@ void xuat(int*a)
 	}
 	cout << endl;
 }
+
+int stringToNum(char c)     // chuyen char sang so
+{
+	return c - '0';
+}
+
+char numToString(int n)     // chuyen so sang char
+{
+	return (char)(n + 48);
+}
 //ten ham da bieu thi tat ca:))
 string chia2(string bigInt)
 {
@@ -148,16 +158,112 @@ void ScanQInt(QInt &number,string userInputStr)
 }
 
 
+string nhan2(string bigInt)
+{
+	string res = "";
+	 int len = bigInt.length();
+	int tmp = 0;
+
+	for ( int i = len-1; i>=0 ; i--)
+	{
+		tmp = stringToNum(bigInt[i]) * 2 + tmp ;
+		res.insert(0, 1, numToString(tmp%10));//lay phan don vi cho vao string
+		tmp = tmp / 10;// lay phan chuc de tinh tiep
+	}
+	if (tmp > 0)  // Neu khac 0 thi bo them vao chuoi res
+	{
+		res.insert(0, 1, numToString(tmp));
+	}
+	return res;
+}
+
+string _2_mu_n (int n)
+{
+	string res = "1";
+	for (int i = 1; i <= n; i++)
+	{
+		res = nhan2(res);
+	}
+	return res;
+
+}
+
+void canBang2Chuoi(string& a, string& b)// cho do dai 2 chuoi bang nhau de cong 2 chuoi lai
+{
+	int a_len = a.length(), b_len = b.length();
+	if (a_len > b_len)
+	{
+		b.insert(0, a_len - b_len, '0');
+	}
+	else
+	{
+		a.insert(0, b_len - a_len, '0');
+	}
+}
+
+
+string operator+(string& a,string& b)
+{
+	string res = "";
+	canBang2Chuoi(a, b);
+	int len = a.length();
+
+	int tmp = 0;
+	for (int i = len - 1; i >= 0; i--)
+	{
+		tmp = stringToNum(a[i]) + stringToNum(b[i]) + tmp;
+		res.insert(0, 1, numToString(tmp % 10));
+		tmp /= 10;
+	}
+	if (tmp > 0)
+	{
+		res.insert(0, 1, numToString(tmp));
+	}
+	return res;
+}
+// Ham chuyen tu he nhi phan sang he thap phan
+
+
+//ham xuat so QInt, xuat ra so he thap phan
+void PrintQInt(QInt number)
+{
+	//chuyen tu QInt sang mang a
+	int a[MAX] = { 0 };
+	for (int i = 0; i < MAX; i++)
+	{
+		if ((number.data[i / 32] >> (32 - 1 - i % 32)) & 1 == 1)
+		{
+			a[i] = 1;
+		}
+	}
+	
+
+	//Tu mang nhi phan a chuyen sang so thap phan
+	string decNum = "0";
+	for (int i = 0; i < MAX; i++)
+	{
+		if (a[i] == 1)
+		{
+			decNum = decNum + _2_mu_n(MAX - 1 - i);
+		}
+	}
+	cout << "\nSo chuyen sang he thap phan: ";
+	cout << decNum;
+}
+
 int main()
 {
-	string ss = "1234458734329";
-	string s = "-123";
+	/*string ss = "1234458734329";
+	string s = "15";
 	int* res = DecToBin(s);
-	xuat(res);
-	/*QInt number;
-	ScanQInt(number,s);*/
 	
-	system("pause");
+	QInt number;
+	ScanQInt(number,s);
+	
+
+	PrintQInt(number);*/
+
+	
 	return 0;
 }
 

@@ -1,2 +1,3 @@
 ﻿  DOAN_BigInteger.cpp
+e:\lap trinh\doan_biginteger\doan_biginteger\doan_biginteger.cpp(234): warning C4554: '&': check operator precedence for possible error; use parentheses to clarify precedence
   DOAN_BigInteger.vcxproj -> E:\lap trinh\DOAN_BigInteger\Debug\DOAN_BigInteger.exe
