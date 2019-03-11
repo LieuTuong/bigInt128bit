@@ -13,7 +13,23 @@ using namespace std;
 typedef struct
 {
 	uint32_t data[4];
+
+	QInt& operator=(const QInt& rhs )
+	{
+		QInt lhs;
+		initQInt(lhs);
+		for (int i = 0; i < MAX; i++)
+		{
+			if (rhs.data[i / 32] >> (32 - 1 - i % 32) & 1)
+			{
+				this->data[i / 32] = this->data[i / 32] | (1 << (32 - 1 - i % 32));
+			}
+		}
+		return lhs;
+	} 
 }QInt;
+
+
 void xuat(array<int,MAX>a)
 {
 	for (auto& x : a)
@@ -344,6 +360,7 @@ bool operator >= (const QInt& a, const QInt& b)
 }
 
 
+
 int main()
 {
 	string ss = "1234458734329";
@@ -370,7 +387,10 @@ int main()
 		cout << "\nSai";
 	}
 
-
+	QInt c = b;
+	cout << "\nToan tu gan: " << endl;
+	PrintQInt(c);
+	
 	system("pause");
 	return 0;
 }
