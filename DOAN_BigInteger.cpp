@@ -5,18 +5,20 @@
 #include <iostream>
 #include<string>
 #include<bitset>
+#include<array>
 
 using namespace std;
 #define MAX 128
+
 typedef struct
 {
 	uint32_t data[4];
 }QInt;
-void xuat(int*a)
+void xuat(array<int,MAX>a)
 {
-	for (int i = 0; i < MAX; i++)
+	for (auto& x : a)
 	{
-		cout << a[i];
+		cout << x;
 	}
 	cout << endl;
 }
@@ -51,9 +53,9 @@ string chia2(string bigInt)
 	return tmp;
 }
 // Ham lay bu 1
-int* bu1(int* a)
+array<int,MAX> bu1(array<int,MAX> a)
 {
-	static int tmp[MAX];
+	array<int,MAX> tmp;
 	for (int i = 0; i < MAX; i++)
 	{
 		tmp[i] = (a[i] == 1) ? 0 : 1;
@@ -64,11 +66,11 @@ int* bu1(int* a)
 
 
 //Ham lay bu 2
-int* bu2(int* a)
+array<int,MAX> bu2(array<int, MAX> a)
 {
 	a = bu1(a);
 	int soDu = 1;
-	static int bu2[MAX] = { 0 };
+	array<int, MAX> bu2 = { 0 };
 	for (int i = MAX - 1; i >= 0; i--)
 	{
 		if (a[i] == 0 && soDu == 1)
@@ -88,9 +90,9 @@ int* bu2(int* a)
 
 
 //Ham dao nguoc mang (sau khi chia 2 thi he nhi phan la lay so du tu duoi len)
-int* reverse(int *a)
+array<int, MAX> reverse(array<int, MAX>a)
 {
-	static int rev_arr[MAX] = { 0 };
+	array<int, MAX> rev_arr = { 0 };
 	for (int i = 0; i < MAX; i++)
 	{
 		rev_arr[i] = a[MAX - i - 1];
@@ -99,9 +101,9 @@ int* reverse(int *a)
 }
 
 //ham chuyen tu thap phan sang nhi phan
-int* DecToBin(string userInputStr)
+array<int, MAX> DecToBin(string userInputStr)
 {	
-    int binary[MAX] = { 0 };
+	array<int, MAX> binary = { 0 };
 
 	bool IsSigned = false;
 	if (userInputStr[0] == '-')
@@ -119,7 +121,7 @@ int* DecToBin(string userInputStr)
 		else binary[i] = 0;
 		userInputStr = chia2(userInputStr);
 	}
-	int* res=reverse(binary);
+	array<int, MAX> res=reverse(binary);
 
 	if (IsSigned)
 	{
@@ -140,7 +142,7 @@ void ScanQInt(QInt &number,string userInputStr)
 {
 	initQInt(number);
 	
-	int* binArr = DecToBin(userInputStr);
+	array<int, MAX> binArr = DecToBin(userInputStr);
 	
 	for (int i = 0; i < MAX; i++)
 	{
@@ -188,7 +190,7 @@ string _2_mu_n (int n)
 
 }
 
-void canBang2Chuoi(string& a, string& b)// cho do dai 2 chuoi bang nhau de cong 2 chuoi lai
+void canBang2Chuoi( string& a,  string& b)// cho do dai 2 chuoi bang nhau de cong 2 chuoi lai
 {
 	int a_len = a.length(), b_len = b.length();
 	if (a_len > b_len)
@@ -202,7 +204,7 @@ void canBang2Chuoi(string& a, string& b)// cho do dai 2 chuoi bang nhau de cong 
 }
 
 
-string operator+(string& a,string& b)
+string operator+( string& a, string& b)
 {
 	string res = "";
 	canBang2Chuoi(a, b);
@@ -224,11 +226,10 @@ string operator+(string& a,string& b)
 // Ham chuyen tu he nhi phan sang he thap phan
 
 
-//ham xuat so QInt, xuat ra so he thap phan
-void PrintQInt(QInt number)
+//Ham chuyen tu QInt sang mang int a[MAX]
+array<int, MAX> QInt_Sang_Arr(QInt number)
 {
-	//chuyen tu QInt sang mang a
-	int a[MAX] = { 0 };
+	array<int, MAX> a = { 0 };
 	for (int i = 0; i < MAX; i++)
 	{
 		if ((number.data[i / 32] >> (32 - 1 - i % 32)) & 1 == 1)
@@ -236,34 +237,141 @@ void PrintQInt(QInt number)
 			a[i] = 1;
 		}
 	}
-	
+	return a;
+}
+
+
+
+//ham xuat so QInt, xuat ra so he thap phan
+void PrintQInt(QInt number)
+{
+	//chuyen tu QInt sang mang a
+	array<int, MAX> a = QInt_Sang_Arr(number);
 
 	//Tu mang nhi phan a chuyen sang so thap phan
-	string decNum = "0";
+	string decNum;
+	string tmp;
 	for (int i = 0; i < MAX; i++)
 	{
 		if (a[i] == 1)
 		{
-			decNum = decNum + _2_mu_n(MAX - 1 - i);
+			tmp = _2_mu_n(MAX - 1 - i);
+			decNum = decNum +  tmp;
 		}
 	}
 	cout << "\nSo chuyen sang he thap phan: ";
 	cout << decNum;
 }
 
+//Tim vi tri bit 1 trong day tinh tu vi tri dang xet
+int viTriBit1(array<int, MAX> a,int viTriDangXet = 0)
+{
+	int i = (viTriDangXet == 0) ? viTriDangXet : viTriDangXet + 1;
+
+	for (i ; i < MAX; i++)
+	{
+		if (a[i] == 1)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+bool operator < (const QInt& a, const QInt& b)
+{
+	
+	//chuyen QInt qua mang de so sanh
+	array<int, MAX> A = QInt_Sang_Arr(a);
+	array<int, MAX> B = QInt_Sang_Arr(b);
+	
+
+	// tim vi tri bit 1 dau tien
+	int bit1_A = viTriBit1(A);
+	int bit1_B = viTriBit1(B);
+
+	while (1)
+	{
+		if (bit1_A > bit1_B)//vi tri bit 1 cua a > vi tri bit 1 dau tien cua b
+			return true;
+		else if (bit1_A < bit1_B)
+			return false;	
+		else if (bit1_A == bit1_B)
+		{
+			bit1_A = viTriBit1(A, bit1_A);
+			bit1_B = viTriBit1(B, bit1_B);
+		}
+	}
+	
+	
+}
+
+bool operator > (const QInt& a, const QInt& b)
+{
+	return !(a < b);
+}
+
+bool operator == (const QInt& a, const QInt& b)
+{
+	bool flag=true;
+
+	//chuyen QInt qua mang de so sanh
+	array<int, MAX> A = QInt_Sang_Arr(a);
+	array<int, MAX> B = QInt_Sang_Arr(b);
+
+	for (int i = 0; i < MAX; i++)
+	{
+		if (A[i] != B[i])
+		{
+			flag = false;
+			break;
+		}
+	}
+	return flag;
+}
+
+
+bool operator <= (const QInt& a, const QInt& b)
+{
+	if (a < b || a == b)
+		return true;
+	return false;
+}
+
+bool operator >= (const QInt& a, const QInt& b)
+{
+	return !(a <= b);
+}
+
+
 int main()
 {
-	/*string ss = "1234458734329";
+	string ss = "1234458734329";
 	string s = "15";
-	int* res = DecToBin(s);
+	string s2 = "145";
+	array<int, MAX> res = DecToBin(s);
 	
-	QInt number;
-	ScanQInt(number,s);
+    QInt a;
+	ScanQInt(a,s2);
+	PrintQInt(a);
 	
 
-	PrintQInt(number);*/
-
+	QInt b;
+	ScanQInt(b, s);
+	PrintQInt(b);
 	
+
+	if (a >= b)
+	{
+		cout << "\nDung";
+	}
+	else
+	{
+		cout << "\nSai";
+	}
+
+
+	system("pause");
 	return 0;
 }
 
