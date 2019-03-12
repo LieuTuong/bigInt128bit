@@ -1,5 +1,3 @@
-// DOAN_BigInteger.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
 
 #include "pch.h"
 #include <iostream>
@@ -13,27 +11,9 @@ using namespace std;
 typedef struct
 {
 	uint32_t data[4];
-
 }QInt;
 
-//void operator =(QInt& lhs, const QInt& rhs)
-//{
-//
-//}
-//
-//QInt& operator=(const QInt& rhs)
-//{
-//	QInt lhs;
-//	initQInt(lhs);
-//	for (int i = 0; i < MAX; i++)
-//	{
-//		if (rhs.data[i / 32] >> (32 - 1 - i % 32) & 1)
-//		{
-//			this->data[i / 32] = this->data[i / 32] | (1 << (32 - 1 - i % 32));
-//		}
-//	}
-//	return lhs;
-//}
+
 void xuat(array<int,MAX>a)
 {
 	for (auto& x : a)
@@ -58,6 +38,8 @@ char numToString(int n)     // chuyen so sang char
 {
 	return (char)(n + 48);
 }
+
+
 //ten ham da bieu thi tat ca:))
 string chia2(string bigInt)
 {
@@ -78,6 +60,9 @@ string chia2(string bigInt)
 	tmp.resize(k);
 	return tmp;
 }
+
+
+
 // Ham lay bu 1
 array<int,MAX> bu1(array<int,MAX> a)
 {
@@ -113,6 +98,8 @@ array<int,MAX> bu2(array<int, MAX> a)
 	return bu2;
 }
 
+
+
 //Ham chuyen tu QInt sang mang int a[MAX]
 array<int, MAX> QInt_To_Arr(const QInt& number)
 {
@@ -126,6 +113,7 @@ array<int, MAX> QInt_To_Arr(const QInt& number)
 	}
 	return a;
 }
+
 
 
 //Ham chuyen tu mang a sang Qint
@@ -144,6 +132,7 @@ QInt Arr_To_QInt(const array<int, MAX>& binArr)
 }
 
 
+
 //Ham dao nguoc mang (sau khi chia 2 thi he nhi phan la lay so du tu duoi len)
 array<int, MAX> reverse(array<int, MAX>a)
 {
@@ -154,6 +143,8 @@ array<int, MAX> reverse(array<int, MAX>a)
 	}
 	return rev_arr;
 }
+
+
 
 //ham chuyen tu thap phan sang nhi phan
 array<int, MAX> DecToBin(string userInputStr)
@@ -200,9 +191,10 @@ void ScanQInt(QInt &number,string userInputStr)
 	for (int i = 0; i < 4; i++)
 	{
 		cout << bitset<32>(number.data[i]);
-	}
-	
+	}	
 }
+
+
 
 
 string nhan2(string bigInt)
@@ -224,6 +216,8 @@ string nhan2(string bigInt)
 	return res;
 }
 
+
+
 string _2_mu_n (int n)
 {
 	string res = "1";
@@ -235,7 +229,10 @@ string _2_mu_n (int n)
 
 }
 
-void canBang2Chuoi( string& a,  string& b)// cho do dai 2 chuoi bang nhau de cong 2 chuoi lai
+
+
+// cho do dai 2 chuoi bang nhau de cong 2 chuoi lai
+void canBang2Chuoi( string& a,  string& b)
 {
 	int a_len = a.length(), b_len = b.length();
 	if (a_len > b_len)
@@ -247,6 +244,7 @@ void canBang2Chuoi( string& a,  string& b)// cho do dai 2 chuoi bang nhau de con
 		a.insert(0, b_len - a_len, '0');
 	}
 }
+
 
 
 string operator+( string& a, string& b)
@@ -268,6 +266,9 @@ string operator+( string& a, string& b)
 	}
 	return res;
 }
+
+
+
 // Ham chuyen tu he nhi phan sang he thap phan
 
 
@@ -296,6 +297,10 @@ void PrintQInt(QInt number)
 	cout << decNum;
 }
 
+
+
+
+
 //Tim vi tri bit 1 trong day tinh tu vi tri dang xet
 int viTriBit1(array<int, MAX> a,int viTriDangXet = 0)
 {
@@ -310,6 +315,8 @@ int viTriBit1(array<int, MAX> a,int viTriDangXet = 0)
 	}
 	return -1;
 }
+
+
 
 bool operator < (const QInt& a, const QInt& b)
 {
@@ -335,14 +342,17 @@ bool operator < (const QInt& a, const QInt& b)
 			bit1_B = viTriBit1(B, bit1_B);
 		}
 	}
-	
-	
 }
+
+
 
 bool operator > (const QInt& a, const QInt& b)
 {
 	return !(a < b);
 }
+
+
+
 
 bool operator == (const QInt& a, const QInt& b)
 {
@@ -371,10 +381,14 @@ bool operator <= (const QInt& a, const QInt& b)
 	return false;
 }
 
+
+
 bool operator >= (const QInt& a, const QInt& b)
 {
 	return !(a <= b);
 }
+
+
 
 QInt operator & (const QInt& a, const QInt& b)
 {
@@ -402,6 +416,8 @@ QInt operator | (const QInt& a, const QInt& b)
 	return res;
 }
 
+
+
 QInt operator ^ (const QInt& a, const QInt& b)
 {
 	QInt res;
@@ -412,6 +428,8 @@ QInt operator ^ (const QInt& a, const QInt& b)
 	return res;
 }
 
+
+
 QInt operator ~ (const QInt& a)
 {
 	QInt res;
@@ -421,10 +439,11 @@ QInt operator ~ (const QInt& a)
 	}
 	return res;
 }
+
+
  // Neu so luong bit dixh < 0 thi xu li nhu the nao, cho i kien???????
 QInt operator >> ( const QInt& a, int bit)
 {
-	QInt number;
 	array<int, MAX> A = QInt_To_Arr(a);
 	
 	if (bit >= MAX) //neu dich so luong bit nhieu hon 128, thi toan bi mang se = 0
@@ -438,14 +457,15 @@ QInt operator >> ( const QInt& a, int bit)
 			A[i] = (i - bit) < 0 ? 0 : A[i - bit];
 		}		 
 	}
-	number = Arr_To_QInt(A);
-	return number;
+	return  Arr_To_QInt(A);
 }
+
+
 
 // thieu truong hop bit < 0
 QInt operator << (const QInt& a,  int bit)
 {
-	QInt number;
+	
 	array<int, MAX> A = QInt_To_Arr(a);
 
 	if (bit >= MAX) //neu dich so luong bit nhieu hon 128, thi toan bi mang se = 0
@@ -459,8 +479,38 @@ QInt operator << (const QInt& a,  int bit)
 			A[i] = (i + bit) > (MAX - 1) ? 0 : A[i + bit];
 		}
 	}
-	number = Arr_To_QInt(A);
-	return number;
+	return  Arr_To_QInt(A);	
+}
+
+
+
+
+QInt rol(const QInt& a)
+{
+	array<int, MAX> A = QInt_To_Arr(a);
+	
+	int MSB = A[0];// giu bit trai nhat 
+	for (int i = 0; i < MAX - 1; i++)
+	{
+		A[i] = A[i + 1];
+	}
+	A[MAX - 1] = MSB;// bit trai nhat thanh bit phai nhat
+	return  Arr_To_QInt(A);	
+}
+
+
+
+QInt ror(const QInt& a)
+{
+	array<int, MAX> A = QInt_To_Arr(a);
+
+	int LSB = A[MAX - 1];
+	for (int i = MAX - 1; i > 0; i--)
+	{
+		A[i] = A[i - 1];
+	}
+	A[0] = LSB;
+	return Arr_To_QInt(A);
 }
 
 
@@ -472,7 +522,7 @@ int main()
 	array<int, MAX> res = DecToBin(s);
 	
     QInt a;
-	ScanQInt(a,s2);
+	ScanQInt(a,s);
 	//PrintQInt(a);
 	
 
@@ -481,8 +531,8 @@ int main()
 	////PrintQInt(b);
 	//
 
-	QInt d = a<<1;
-	cout << "\n<<" << endl;
+	QInt d = rol(a);
+	cout << "\nrol<<" << endl;
 	PrintQInt(d);
 	
 	system("pause");
