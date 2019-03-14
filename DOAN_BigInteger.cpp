@@ -8,9 +8,11 @@
 using namespace std;
 #define MAX 128
 
+// do ko chac unsigned int luon la 4 bytes, nen dung unit32_t
 typedef struct
 {
 	uint32_t data[4];
+	bool IsSigned;
 }QInt;
 
 
@@ -39,23 +41,39 @@ char numToString(int n)     // chuyen so sang char
 	return (char)(n + 48);
 }
 
+string remove0(const string& number)
+{
+	string res = number;
+	for (int i = 0; i < number.length(); i++)
+	{
+		if (number[i] != '0')//Vi tri khac 0 dau tien
+		{
+			res.erase(0, i);
+			break;
+		}
+	}
+	return res;
+}
+
 
 //ten ham da bieu thi tat ca:))
 string chia2(string bigInt)
 {
 	
 	string tmp;
+	string soChia = remove0(bigInt);
+
 	unsigned short int i = 0, j = 0, k = 0;
 	tmp.resize(bigInt.length());
-	if (bigInt[0] - '0' < 2)
+	if (stringToNum(soChia[0]) < 2)
 	{
 		i = 1; 
 		j = 10;
 	}
-	for (; i < bigInt.length(); i++)
+	for (; i < soChia.length(); i++)
 	{
-		tmp[k++] = ((bigInt[i] - '0' + j) / 2 + '0');
-		j = ((bigInt[i] - 48 + j) % 2) * 10;
+		tmp[k++] = ((soChia[i] - '0' + j) / 2 + '0');
+		j = ((soChia[i] - 48 + j) % 2) * 10;
 	}
 	tmp.resize(k);
 	return tmp;
@@ -196,18 +214,74 @@ void ScanQInt(QInt &number,string userInputStr)
 
 
 
+//
+//string nhan2(string bigInt)
+//{
+//	string res = "";
+//	 int len = bigInt.length();
+//	int tmp = 0;
+//
+//	for ( int i = len-1; i>=0 ; i--)
+//	{
+//		tmp = stringToNum(bigInt[i]) * 2 + tmp ;
+//		res.insert(0, 1, numToString(tmp%10));//lay phan don vi cho vao string
+//		tmp = tmp / 10;// lay phan chuc de tinh tiep
+//	}
+//	if (tmp > 0)  // Neu khac 0 thi bo them vao chuoi res
+//	{
+//		res.insert(0, 1, numToString(tmp));
+//	}
+//	return res;
+//}
 
-string nhan2(string bigInt)
+int soSanhVoi1(const string& a)
+{
+	int viTriDauCham=0;
+	for (viTriDauCham; viTriDauCham < a.length(); viTriDauCham++)
+	{
+		if (a[viTriDauCham] == '.')
+			break;
+	}
+	string phanNguyen = "";
+	for (int i = 0; i < viTriDauCham; i++)
+		phanNguyen.push_back(a[i]);
+
+	string phanThapPhan = "";
+	for (int i = viTriDauCham + 1; i < a.length(); i++)
+		phanThapPhan.push_back(a[i]);
+
+	if (phanNguyen.compare("1") < 0)
+		return -1;
+	else
+	{
+		if (phanNguyen.compare("1") == 0)
+		{
+			int len = phanThapPhan.length();
+			string _0(len, '0');
+			if (phanThapPhan.compare(_0) == 0)return 0;
+			else return 1;
+		}
+	}
+}
+string operator * (string bigNumber, int x)
 {
 	string res = "";
-	 int len = bigInt.length();
+	int len = bigNumber.length();
 	int tmp = 0;
 
-	for ( int i = len-1; i>=0 ; i--)
+	for (int i = len - 1; i >= 0; i--)
 	{
-		tmp = stringToNum(bigInt[i]) * 2 + tmp ;
-		res.insert(0, 1, numToString(tmp%10));//lay phan don vi cho vao string
-		tmp = tmp / 10;// lay phan chuc de tinh tiep
+		if (bigNumber[i] == '.')
+		{
+			res.insert(0, 1, '.');
+		}
+		else 
+		{
+			tmp = stringToNum(bigNumber[i]) * x + tmp;
+			res.insert(0, 1, numToString(tmp % 10));//lay phan don vi cho vao string
+			tmp = tmp / 10;// lay phan chuc de tinh tiep
+		}
+		
 	}
 	if (tmp > 0)  // Neu khac 0 thi bo them vao chuoi res
 	{
@@ -215,21 +289,27 @@ string nhan2(string bigInt)
 	}
 	return res;
 }
+//string _2_mu_n (int n)
+//{
+//	string res = "1";
+//	for (int i = 1; i <= n; i++)
+//	{
+//		res = nhan2(res);
+//	}
+//	return res;
+//
+//}
 
-
-
-string _2_mu_n (int n)
+string _x_mu_n(int coSo, int soMu)
 {
 	string res = "1";
-	for (int i = 1; i <= n; i++)
+	for (int i = 1; i <= soMu; i++)
 	{
-		res = nhan2(res);
+		res = res*coSo;
 	}
 	return res;
 
 }
-
-
 
 // cho do dai 2 chuoi bang nhau de cong 2 chuoi lai
 void canBang2Chuoi( string& a,  string& b)
@@ -246,15 +326,15 @@ void canBang2Chuoi( string& a,  string& b)
 }
 
 
-
-string operator+( string& a, string& b)
+//Ham cong 2 chuoi bigInt
+string operator + (string& a,string& b)
 {
 	string res = "";
 	canBang2Chuoi(a, b);
 	int len = a.length();
 
 	int tmp = 0;
-	for (int i = len - 1; i >= 0; i--)
+	for (int i = len - 1; i >= 0; --i)
 	{
 		tmp = stringToNum(a[i]) + stringToNum(b[i]) + tmp;
 		res.insert(0, 1, numToString(tmp % 10));
@@ -268,12 +348,72 @@ string operator+( string& a, string& b)
 }
 
 
+//Ham tru 2 chuoi BigInt
+string operator - (string& soTru, string& soBiTru)
+{
+	string res = "";
+	canBang2Chuoi(soTru, soBiTru);
 
-// Ham chuyen tu he nhi phan sang he thap phan
+	int len = soTru.length();
+	int tmp = 0;// soNho
+	int hieu;
+	for (int i = len - 1; i >= 0; --i)
+	{
+		
+		if (soTru[i] < soBiTru[i]) //Neu tai vi tri dg xet, (soBiTru < soTru ) lay (soBiTru + 10 ) - soBiTru
+		{
+			hieu = (stringToNum(soTru[i]) + 10) - stringToNum(soBiTru[i]) - tmp;
+			tmp = 1;
+		}
+		else// neu soBiTru lon hon thi lay (SoBiTru - soTru)
+		{
+			hieu=stringToNum(soTru[i]) - stringToNum(soBiTru[i]) - tmp;			
+		}
+		res.insert(0, 1, numToString(hieu));// bo ket qua tinh dc theo hang vao chuoi res
+	}
+	return res;
+}
+//
+//string operator * (string& a, string& b)
+//{
+//	string res;
+//	for (int i = 0; i < a.length(); i++)
+//	{
+//		string tmpStr;
+//		int soDu = 0, tmp;
+//		for (int j = 0; j < b.length(); j++)
+//		{
+//			tmp = a[i] * b[j] + soDu;
+//			tmpStr.push_back(tmp % 10);
+//			soDu = tmp / 10;
+//		}
+//		if (soDu > 0)
+//		{
+//			tmpStr.push_back(soDu);
+//		}
+//		for (int j = 0; j < i; j++)
+//		{
+//			tmpStr.insert(res.begin(), 0);
+//		}
+//		res = res + tmpStr;
+//	}
+//	return res;
+//}
 
-
-
-
+// Ham chuyen tu nhi phan sang thap phan
+string BinToDec(array<int,MAX> bit)
+{
+	string decNum, tmp;
+	for (int i = 0; i < MAX; i++)
+	{
+		if (bit[i] == 1)
+		{
+			tmp = _x_mu_n(2,MAX - 1 - i);
+			decNum = decNum + tmp;
+		}
+	}
+	return decNum;
+}
 
 
 //ham xuat so QInt, xuat ra so he thap phan
@@ -289,7 +429,7 @@ void PrintQInt(QInt number)
 	{
 		if (a[i] == 1)
 		{
-			tmp = _2_mu_n(MAX - 1 - i);
+			tmp = _x_mu_n(2,MAX - 1 - i);
 			decNum = decNum +  tmp;
 		}
 	}
@@ -452,9 +592,11 @@ QInt operator >> ( const QInt& a, int bit)
 	}
 	else
 	{
+		int tmp;
+		tmp = (a.IsSigned) ? 1 : 0;
 		for ( int i = MAX-1; i >=0; i--)
 		{
-			A[i] = (i - bit) < 0 ? 0 : A[i - bit];
+			A[i] = (i - bit) < 0 ? tmp : A[i - bit];
 		}		 
 	}
 	return  Arr_To_QInt(A);
@@ -513,16 +655,155 @@ QInt ror(const QInt& a)
 	return Arr_To_QInt(A);
 }
 
+string operator * (string &a, string& b)
+{
+	string resStr;
+	int* res = new int[a.length() + b.length()];
+	for (int i = 0; i < a.length() + b.length(); i++)
+		res[i] = 0;
+	for (int i = a.length() - 1; i >= 0; i--)
+	{
+		for (int j = b.length() - 1; j >= 0; j--)
+		{
+			res[1 + i + j] += (a[i] - '0')*(b[j] - '0');
+		}
+	}
 
+	for (int i = a.length() + b.length(); i >= 0; i--)
+	{
+		if (res[i] > 9)
+		{
+			res[i - 1] += res[i] / 10;
+			res[i] %= 10;
+		}
+	}
+	for (int i = 0; i < a.length() + b.length(); i++)
+	{
+		resStr += (res[i] + '0');
+	}
+	return resStr;
+}
+
+typedef struct
+{
+	uint32_t data[4];
+}Qfloat;
+
+
+array<int, MAX> operator + (const array<int, MAX>& A, const array<int, MAX>& B)
+{
+	array<int, MAX> res;
+	int tmp = 0;
+	for (int i = MAX - 1; i >= 0; i--)
+	{
+		tmp = A[i] + B[i] + tmp;
+		if (tmp == 2)
+		{
+			res[i] = 0;
+			tmp = 1;
+		}
+		else if (tmp == 3)
+		{
+			res[i] = 1;
+			tmp = 1;
+		}
+		else
+		{
+			res[i] = tmp;
+			tmp = 0;
+		}
+	}
+	return res;
+}
+//Cong 2 QINt
+QInt operator + (const QInt& a, const QInt& b)
+{
+	array<int, MAX> A = QInt_To_Arr(a);
+	array<int, MAX> B = QInt_To_Arr(b);
+	array<int, MAX> res;
+	res = A + B;
+	return Arr_To_QInt(res);
+}
+
+/*Phep tru 2 QInt a va b
+   a-b=a+(-b)
+   a + soBu2(b)
+   */
+QInt operator - (const QInt& soTru, const QInt& soBiTru)
+{
+	array<int, MAX> SoTru = QInt_To_Arr(soTru);
+	array<int, MAX> SoBiTru = QInt_To_Arr(soBiTru);
+	array<int, MAX> res;
+
+	//So bu 2 cua so bi tru
+	SoBiTru = bu2(SoBiTru);
+
+	res = SoTru + SoBiTru;
+	cout << "\nPhan nhi phan sau khi tru: " << endl;
+	xuat(res);
+	return Arr_To_QInt(res);
+}
+
+
+QInt operator * (const QInt& a, const QInt& b)
+{
+
+}
+/*Giai thich thuat toan chuyen phan thap phan cua Qfloat sang he nhi phan
+VD: so 12.75, phan thap phan = 0.75
+Neu tinh theo cong thuc thi: 0.75 * 2 = 1.5 => 1
+						 (1.5 - 1)* 2 = 1   => 1
+vi co dau cham kho tinh toan, nen chuyen sang the nay: 0.75 * 10^2 * 2 = 150 > 10^2 => 1
+													  (150 - 10^2) * 2 = 100 = 10^2 => 1
+Noi chung la chuyen sang so nguyen cho de tinh:)))
+*/
+string DecToBin_PhanThapPhan(string phanThapPhan)
+{
+	string bin="";
+	
+	while (1)
+	{
+		phanThapPhan = phanThapPhan * 2;
+		if (soSanhVoi1(phanThapPhan)==0)
+		{
+			bin.push_back('1');
+			break;
+		}
+		else if (soSanhVoi1(phanThapPhan) > 0)
+		{
+			bin.push_back('1');
+			for (int i = 0; i < phanThapPhan.length(); i++)
+			{
+				if (phanThapPhan[i] == '.')
+				{
+					phanThapPhan[i - 1] = '0';
+					break;
+				}
+			}
+		}
+		else if (soSanhVoi1(phanThapPhan) < 0)
+		{
+			bin.push_back('0');
+		}
+		
+	}
+	return bin;
+}
+
+
+void ScanQfloat(Qfloat &x, string userInputStr)
+{
+
+}
 int main()
 {
-	string ss = "1234458734329";
+	/*string ss = "1234458734329";
 	string s = "19";
 	string s2 = "30";
 	array<int, MAX> res = DecToBin(s);
 	
     QInt a;
-	ScanQInt(a,s);
+	ScanQInt(a,s);*/
 	//PrintQInt(a);
 	
 
@@ -531,12 +812,14 @@ int main()
 	////PrintQInt(b);
 	//
 
-	QInt d = rol(a);
-	cout << "\nrol<<" << endl;
-	PrintQInt(d);
-	
-	system("pause");
+	string a = "69";
+	string b = "79";
+	QInt aa,bb;
+	ScanQInt(aa, a);
+	ScanQInt(bb, b);
+	QInt res = aa - bb;
+	cout << "\nPhep cong: " << endl;
+	PrintQInt(res);
 	return 0;
 }
-
 
